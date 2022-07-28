@@ -23,8 +23,12 @@ class Tilemap:
 
         #Create Adjacency Rules -------------------------------------------------------------------------------------------------------------------------------------------
         self.valid_neighbors = []
-        tl = self.tile_size
-        edges = [[tl-1, tl//2],[tl//2, 0],[0, tl//2],[tl//2, tl-1]]
+        tl = self.tile_size-1
+
+        #Right, Up, Left, Down
+        #3 Points per edge: (1, midpoint (floored), length-1)
+        # Left to right for top and bottom, Top to bottom for left and right
+        edges = [[[tl, 0],[tl, (tl+1)//2],[tl, tl]], [[0, 0],[(tl+1)//2,0],[tl,0]], [[0, 0],[0, (tl+1)//2],[0, tl]], [[0, tl],[(tl+1)//2, tl],[tl, tl]]]  
         
         
         for current in range(len(self.tile_images)):
@@ -36,8 +40,14 @@ class Tilemap:
             
                 for comparison in range(len(self.tile_images)):
                     comparison_image_pixels = self.tile_images[comparison].load()
-                    
-                    if current_image_pixels[edges[d][0], edges[d][1]] == comparison_image_pixels[edges[(d+2)%4][0], edges[(d+2)%4][1]]:
+
+                    #Check if all three edge points match
+                    valid = True
+                    for edge in range(3):
+                        if current_image_pixels[edges[d][edge][0], edges[d][edge][1]] != comparison_image_pixels[edges[(d+2)%4][edge][0], edges[(d+2)%4][edge][1]]:
+                            valid = False
+
+                    if valid:
                         direction_valid_neighbors.append(comparison)
                 
                 current_valid_neighbors.append(direction_valid_neighbors)
@@ -126,7 +136,7 @@ class Tilemap:
         #If collapsed, incriment counter and save current bitmap
         if len(self.bitmap[r][c]) == 1:
             self.tiles_collapsed += 1
-            self.frames.append(self.get_bitmap_image(5))
+            self.frames.append(self.get_bitmap_image(10))
 
         #If current superposition updated or is already collapsed:
         if len(invalid_tiles) > 0 or len(current) == 1:
@@ -166,10 +176,9 @@ class Tilemap:
     
     
     
-knots = Tilemap("Knots", (20, 20))
-knots.run()
-
-knots.create_gif()
+rooms = Tilemap("Rooms", (30, 30))
+rooms.run()
+rooms.create_gif()
 
 
 
