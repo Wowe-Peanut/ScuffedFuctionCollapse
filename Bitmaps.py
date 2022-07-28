@@ -24,6 +24,7 @@ class Tilemap:
         tl = self.tile_size
         edges = [[tl-1, tl//2],[tl//2, 0],[0, tl//2],[tl//2, tl-1]]
         
+        
         for current in range(len(self.tile_images)):
             current_valid_neighbors = []
             current_image_pixels = self.tile_images[current].load()
@@ -44,7 +45,7 @@ class Tilemap:
                     
 
         #Initialize Bitmap (Each position will have a superposition: A list of possible positions): A map of tile indexes or possible indexes -----------------------------
-        self.bitmap = [[[i for i in range(len(tile_images))] for r in range(size[0])] for c in range(size[1])]
+        self.bitmap = [[[i for i in range(len(self.tile_images))] for c in range(size[1])] for r in range(size[0])]
 
 
         #Variables for keeping track of progress
@@ -57,14 +58,14 @@ class Tilemap:
 
     #Returns image formed from the bitmap using tile_images as a key-------------------------------------------------------------------------------------------------------               
     def get_bitmap_image(self, scale=5):
-        output = Image.new("RGB", (self.size[0]*self.tile_size, self.size[1]*self.tile_size))
+        output = Image.new("RGB", (self.size[1]*self.tile_size, self.size[0]*self.tile_size))
 
         for r in range(len(self.bitmap)):
             for c in range(len(self.bitmap[0])):
                 if len(self.bitmap[r][c]) != 1:
                     continue
                     
-                output.paste(self.tile_images[self.bitmap[r][c][0]], (r*self.tile_size, c*self.tile_size))
+                output.paste(self.tile_images[self.bitmap[r][c][0]], (c*self.tile_size, r*self.tile_size))
 
         return output.resize((output.size[0]*scale, output.size[1]*scale), Image.Resampling.NEAREST)
 
@@ -93,7 +94,7 @@ class Tilemap:
             
 
     #Recursively propagates cells with constraints; Only called on a space when its superposition changes/collapses ------------------------------------------------------
-    def propogate(self, r, c):
+    def propagate(self, r, c):
         
         #Removes all tiles in current superposition if they don't have a valid neighbor in each direction
         current = self.bitmap[r][c]
@@ -125,15 +126,16 @@ class Tilemap:
             #Propogate each surrounding cell if it is not already collapsed
             for d in directions:
                 if 0 <= d[0] < self.size[0] and 0 <= d[1] < self.size[1]:
+                    
                     if len(self.bitmap[d[0]][d[1]]) > 1:
-                        self.propogate(d[0], d[1])
+                        self.propagate(d[0], d[1])
                     
 
     #Creates gif of self.frames and the "imageio" library -----------------------------------------------------------------------------------------------------------------
     def create_gif(self):
         pass
 
-
+    
     #Runs the algorithm until it finishes or until it hits a contradiction ------------------------------------------------------------------------------------------------   
     def run(self):
         while self.tiles_collapsed < self.total_tiles:
@@ -145,15 +147,17 @@ class Tilemap:
             self.tiles_collapsed += 1
     
             #Reflect changes in surrounding tiles and possibily collapse some
-            self.propogate(target[0], target[1])
+            self.propagate(target[0], target[1])
+        
     
     
     
-    
-knots = Tilemap("Knots", (13, 13))
-#knots.run()
-knots.get_bitmap_image(8).show()
-print(str(knots.valid_neighbors[0]))
+knots = Tilemap("Knots", (20, 20))
+knots.run()
+knots.get_bitmap_image(3).show()
+
+
+
 
 
 
