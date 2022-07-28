@@ -100,7 +100,8 @@ class Tilemap:
         current = self.bitmap[r][c]
         directions = [[r,c+1], [r-1,c], [r, c-1], [r+1, c]]
         invalid_tiles = []
-        
+
+        #Identify Invalid Tiles
         for cur in current:
             for i, d in enumerate(directions):
                 if 0 <= d[0] < self.size[0] and 0 <= d[1] < self.size[1]:
@@ -115,10 +116,15 @@ class Tilemap:
                     if not valid:
                         invalid_tiles.append(cur)
                         break
-
+        #Remove Invalid Tiles
         for tile in invalid_tiles:
             if tile in self.bitmap[r][c]:
                 self.bitmap[r][c].remove(tile)
+
+        #If collapsed, incriment counter and save current bitmap
+        if len(self.bitmap[r][c]) == 1:
+            self.tiles_collapsed += 1
+            self.frames.append(self.get_bitmap_image(5))
 
         #If current superposition updated or is already collapsed:
         if len(invalid_tiles) > 0 or len(current) == 1:
@@ -133,7 +139,12 @@ class Tilemap:
 
     #Creates gif of self.frames and the "imageio" library -----------------------------------------------------------------------------------------------------------------
     def create_gif(self):
-        pass
+
+        #Add some buffer frames
+        self.frames += [self.frames[-1] for i in range(20)]
+
+        #Combine frames to gif and save to desktop with random name
+        imageio.mimsave(r"C:\Users\Peanu\OneDrive\Desktop\{0}.gif".format(random.randint(0, 2**31-1)), self.frames, duration=0.01)
 
     
     #Runs the algorithm until it finishes or until it hits a contradiction ------------------------------------------------------------------------------------------------   
@@ -144,17 +155,19 @@ class Tilemap:
         
             #Collapse unit with lowest entropy (or tied for it)
             self.bitmap[target[0]][target[1]] = [random.choice(self.bitmap[target[0]][target[1]])]
-            self.tiles_collapsed += 1
+            
     
             #Reflect changes in surrounding tiles and possibily collapse some
             self.propagate(target[0], target[1])
+        
         
     
     
     
 knots = Tilemap("Knots", (20, 20))
 knots.run()
-knots.get_bitmap_image(3).show()
+
+knots.create_gif()
 
 
 
