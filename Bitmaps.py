@@ -7,6 +7,8 @@ import random
 class Tilemap:
     def __init__(self, tileset_name, size):
 
+        
+        
         #Read-in all images from tileset ----------------------------------------------------------------------------------------------------------------------------------
         self.tile_images = []
         directory = os.path.join(r"C:\Users\Peanu\OneDrive\Desktop\WFC\ScuffedFuctionCollapse\Tilesets", tileset_name)
@@ -54,8 +56,8 @@ class Tilemap:
 
         #The bitmaps of each step are logged to be turned into 
         self.frames = []
-        
-
+    
+    
     #Returns image formed from the bitmap using tile_images as a key-------------------------------------------------------------------------------------------------------               
     def get_bitmap_image(self, scale=5):
         output = Image.new("RGB", (self.size[1]*self.tile_size, self.size[0]*self.tile_size))
