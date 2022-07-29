@@ -72,9 +72,9 @@ class Tilemap:
     def get_bitmap_image(self, scale=5):
         output = Image.new("RGB", (self.size[1]*self.tile_size, self.size[0]*self.tile_size))
 
-        for r in range(len(self.bitmap)):
-            for c in range(len(self.bitmap[0])):
-                if len(self.bitmap[r][c]) != 1:
+        for r in range(self.size[0]):
+            for c in range(self.size[1]):
+                if len(self.bitmap[c][r]) != 1:
                     continue
                     
                 output.paste(self.tile_images[self.bitmap[c][r][0]], (c*self.tile_size, r*self.tile_size))
@@ -91,7 +91,7 @@ class Tilemap:
         for r in range(len(self.bitmap)):
             for c in range(len(self.bitmap[0])):
                 val = self.bitmap[r][c]
-                if len(val) == 1:
+                if len(val) <= 1:
                     continue
                 
                 elif len(val) < min_entropy:
@@ -101,7 +101,8 @@ class Tilemap:
                 elif len(val) == min_entropy:
                     min_positions.append((r,c))
 
-        return random.choice(min_positions)
+        
+        return None if len(min_positions) == 0 else random.choice(min_positions)
         
             
 
@@ -164,7 +165,9 @@ class Tilemap:
         while self.tiles_collapsed < self.total_tiles:
             target = self.lowest_entropy()
 
-        
+
+            if not target:
+                break
             #Collapse unit with lowest entropy (or tied for it)
             self.bitmap[target[0]][target[1]] = [random.choice(self.bitmap[target[0]][target[1]])]
             
@@ -176,9 +179,9 @@ class Tilemap:
     
     
     
-tilemap = Tilemap("Circuit", (30, 30))
+tilemap = Tilemap("FloorPlan", (30, 30))
 tilemap.run()
-tilemap.get_bitmap_image(2).show()
+tilemap.get_bitmap_image(5).show()
 #tilemap.create_gif()
 
 
