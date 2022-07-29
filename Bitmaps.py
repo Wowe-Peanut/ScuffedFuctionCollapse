@@ -136,7 +136,7 @@ class Tilemap:
         #If collapsed, incriment counter and save current bitmap
         if len(self.bitmap[r][c]) == 1:
             self.tiles_collapsed += 1
-            self.frames.append(self.get_bitmap_image(10))
+            self.frames.append(self.get_bitmap_image(3))
 
         #If current superposition updated or is already collapsed:
         if len(invalid_tiles) > 0 or len(current) == 1:
@@ -176,9 +176,10 @@ class Tilemap:
     
     
     
-rooms = Tilemap("Rooms", (30, 30))
-rooms.run()
-rooms.create_gif()
+tilemap = Tilemap("Circuit", (30, 30))
+tilemap.run()
+tilemap.get_bitmap_image(2).show()
+#tilemap.create_gif()
 
 
 
