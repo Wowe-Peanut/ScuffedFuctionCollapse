@@ -25,10 +25,10 @@ class Tilemap:
         self.valid_neighbors = []
         tl = self.tile_size-1
 
-        #Right, Up, Left, Down
+        #Bottom, Left, Top, Right
         #3 Points per edge: (1, midpoint (floored), length-1)
         # Left to right for top and bottom, Top to bottom for left and right
-        edges = [[[tl, 0],[tl, (tl+1)//2],[tl, tl]], [[0, 0],[(tl+1)//2,0],[tl,0]], [[0, 0],[0, (tl+1)//2],[0, tl]], [[0, tl],[(tl+1)//2, tl],[tl, tl]]]  
+        edges = [[[tl, 0],[tl, (tl+1)//2],[tl, tl]], [[0, 0],[(tl+1)//2,0],[tl,0]], [[0, 0],[0, (tl+1)//2],[0, tl]], [[0, tl],[(tl+1)//2, tl],[tl, tl]]][::-1]
         
         
         for current in range(len(self.tile_images)):
@@ -77,7 +77,7 @@ class Tilemap:
                 if len(self.bitmap[r][c]) != 1:
                     continue
                     
-                output.paste(self.tile_images[self.bitmap[r][c][0]], (c*self.tile_size, r*self.tile_size))
+                output.paste(self.tile_images[self.bitmap[c][r][0]], (c*self.tile_size, r*self.tile_size))
 
         return output.resize((output.size[0]*scale, output.size[1]*scale), Image.Resampling.NEAREST)
 
