@@ -179,10 +179,10 @@ class Tilemap:
     
     
     
-tilemap = Tilemap("Circuit", (30, 30))
+tilemap = Tilemap("Knots", (30, 30))
 tilemap.run()
 tilemap.get_bitmap_image(5).show()
-#tilemap.create_gif()
+tilemap.create_gif()
 
 
 
